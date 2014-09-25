@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/PVSForGlass.iml" filepath="$PROJECT_DIR$/PVSForGlass.iml" />
       <module fileurl="file://$PROJECT_DIR$/glass/glass.iml" filepath="$PROJECT_DIR$/glass/glass.iml" />
+      <module fileurl="file://$PROJECT_DIR$/min3d/min3d.iml" filepath="$PROJECT_DIR$/min3d/min3d.iml" />
       <module fileurl="file://$PROJECT_DIR$/mobile/mobile.iml" filepath="$PROJECT_DIR$/mobile/mobile.iml" />
     </modules>
   </component>
