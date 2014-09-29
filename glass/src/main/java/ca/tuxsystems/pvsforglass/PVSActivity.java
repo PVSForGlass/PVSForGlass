@@ -7,6 +7,10 @@ import com.google.android.glass.widget.CardScrollView;
 
 import android.app.Activity;
 import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
@@ -15,8 +19,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
-import javax.microedition.khronos.opengles.GL10;
-import javax.microedition.khronos.egl.EGLConfig;
+import min3d.core.Object3dContainer;
+import min3d.core.RendererActivity;
+import min3d.objectPrimitives.Sphere;
+import min3d.vos.RenderType;
 
 /**
  * An {@link Activity} showing a tuggable "Hello World!" card.
@@ -27,72 +33,42 @@ import javax.microedition.khronos.egl.EGLConfig;
  * and use a {@link com.google.android.glass.touchpad.GestureDetector}.
  * @see <a href="https://developers.google.com/glass/develop/gdk/touch">GDK Developer Guide</a>
  */
-public class PVSActivity extends Activity {
+public class PVSActivity extends RendererActivity implements SensorEventListener {
+    Object3dContainer _object;
+    int _count;
 
-    private GLSurfaceView mGLView;
-
-    class MyGLSurfaceView extends GLSurfaceView {
-
-        public MyGLSurfaceView(Context context){
-            super(context);
-
-            // Create an OpenGL ES 2.0 context
-            setEGLContextClientVersion(2);
-
-            // Set the Renderer for drawing on the GLSurfaceView
-            setRenderer(new MyGLRenderer());
-
-            // Render the view only when there is a change in the drawing data
-            setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-        }
-    }
-
-    public class MyGLRenderer implements GLSurfaceView.Renderer {
-
-        public void onSurfaceCreated(GL10 unused, EGLConfig config) {
-            // Set the background frame color
-            GLES20.glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-        }
-
-        public void onDrawFrame(GL10 unused) {
-            // Redraw background color
-            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-        }
-
-        public void onSurfaceChanged(GL10 unused, int width, int height) {
-            GLES20.glViewport(0, 0, width, height);
-        }
-    }
-
+    private SensorManager mSensorManager;
+    private Sensor mAccelerometer;
 
     @Override
-    protected void onCreate(Bundle bundle) {
-        super.onCreate(bundle);
+    public void initScene()
+    {
+        _object = new Sphere(1f, 15, 10);
+        _object.normalsEnabled(false); // .. allows vertex colors to show through
+        scene.addChild(_object);
+        _object.renderType(RenderType.LINES);
 
-        // Create a GLSurfaceView instance and set it
-        // as the ContentView for this Activity.
-        mGLView = new MyGLSurfaceView(this);
-        setContentView(mGLView);
+        _object.pointSize( _object.pointSize()+0.12f );
+        _object.lineWidth( _object.lineWidth()+0.12f );
+
+        // ( btw, notice how the Scene contains no Lights)
+
+        _count = 0;
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    public void updateScene()
+    {
+        _count++;
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    public void onSensorChanged(SensorEvent sensorEvent) {
+
     }
 
-    /**
-     * Builds a Glass styled "Hello World!" view using the {@link CardBuilder} class.
-     */
-    private View buildView() {
-        CardBuilder card = new CardBuilder(this, CardBuilder.Layout.TEXT);
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
 
-        card.setText(R.string.hello_world);
-        return card.getView();
     }
-
 }
