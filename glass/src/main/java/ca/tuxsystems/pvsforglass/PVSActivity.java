@@ -14,6 +14,10 @@ import min3d.core.RendererActivity;
 import min3d.objectPrimitives.Sphere;
 import min3d.vos.RenderType;
 
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static java.lang.Math.toRadians;
+
 
 /**
  * An {@link Activity} showing a tuggable "Hello World!" card.
@@ -45,6 +49,43 @@ public class PVSActivity extends RendererActivity implements SensorEventListener
         _object.lineWidth( _object.lineWidth()+0.12f );
 
         _object.doubleSidedEnabled(true);
+
+        _object = new Sphere(.2f, 15, 10);
+        _object.normalsEnabled(false); // .. allows vertex colors to show through
+        scene.addChild(_object);
+        _object.renderType(RenderType.TRIANGLES);
+
+        _object.pointSize( _object.pointSize()+0.12f );
+        _object.lineWidth( _object.lineWidth()+0.12f );
+
+        _object.doubleSidedEnabled(true);
+
+        _object.position().setAll(0,0,1);
+
+        _object = new Sphere(.2f, 15, 10);
+        _object.normalsEnabled(false); // .. allows vertex colors to show through
+        scene.addChild(_object);
+        _object.renderType(RenderType.TRIANGLES);
+
+        _object.pointSize( _object.pointSize()+0.12f );
+        _object.lineWidth( _object.lineWidth()+0.12f );
+
+        _object.doubleSidedEnabled(true);
+
+        _object.position().setAll(0.7f,0.7f,-0.7f);
+
+        _object = new Sphere(.2f, 15, 10);
+        _object.normalsEnabled(false); // .. allows vertex colors to show through
+        scene.addChild(_object);
+        _object.renderType(RenderType.TRIANGLES);
+
+        _object.pointSize( _object.pointSize()+0.12f );
+        _object.lineWidth( _object.lineWidth()+0.12f );
+
+        _object.doubleSidedEnabled(true);
+
+        _object.position().setAll(1,0,0.7f);
+
         Log.i("sphere position", _object.position().toString());
         Log.i("cam position", scene.camera().position.toString());
         Log.i("cam target", scene.camera().target.toString());
@@ -54,7 +95,7 @@ public class PVSActivity extends RendererActivity implements SensorEventListener
         scene.camera().frustum.zFar(10f);
         // ( btw, notice how the Scene contains no Lights)
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        mRotationVector = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+        mRotationVector = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
         mSensorManager.registerListener(this, mRotationVector, SensorManager.SENSOR_DELAY_UI);
         _count = 0;
     }
@@ -68,17 +109,25 @@ public class PVSActivity extends RendererActivity implements SensorEventListener
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (event.sensor.getType() != Sensor.TYPE_ROTATION_VECTOR)
+        if (event.sensor.getType() != Sensor.TYPE_ORIENTATION)
             return;
 
-        scene.camera().target.x = event.values[0];
-        scene.camera().target.y = event.values[1];
+        scene.camera().target.x = (float) cos(toRadians(event.values[0]));
+        scene.camera().target.z = (float) sin(toRadians(event.values[0]));
+        scene.camera().target.y = (float) -cos(toRadians(event.values[1]));
 
-        Log.i("cam target", scene.camera().target.toString());
+        //Log.i("TYPE_ORIENTATION 0, 1, 2", event.values[0] + " " + event.values[1] + " " + event.values[2]);
+
+        if (System.currentTimeMillis()/100 != m_time) {
+            m_time = System.currentTimeMillis()/100;
+        Log.i("CAM TARGET", scene.camera().target.toString());
+        }
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
 
     }
+
+    long m_time = 0;
 }
